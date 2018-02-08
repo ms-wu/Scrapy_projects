@@ -32,7 +32,10 @@ def is_login():
 def get_xsrf():
     #获取xrsf code
     response = session.get("https://www.zhihu.com", headers=header)
-    match_obj = re.match('.*name="_xsrf" value="?(.*)"', response.text)
+    response_text = response.text
+    print(response.text)
+    match_obj = re.match('.*srf&quot;:&quot;(.*?)&quot;,', response_text, re.DOTALL)
+    print(match_obj.group(1))
     if match_obj:
         return match_obj.group(1)
     else:
@@ -42,8 +45,27 @@ def get_xsrf():
 def get_index():
     response = session.get("https://www.zhihu.com", headers=header)
     with open("index.html", "wb") as f:
-        f.write(response.text.encode("utf-8"))
+        f.write(response.text.encode('utf-8'))
         print("ok")
+
+def get_captcha():
+    import time
+    t = str(int(time.time()*1000))
+    captcha_url = "https://www.zhihu.com/captcha.gif?r={0}&type=login".format(t)
+    t = session.get(captcha_url, headers=header)
+    with open("captcha.jpg","wb") as f:
+        f.write(t.content)
+        f.close()
+
+    from PIL import Image
+    try:
+        im = Image.open("captcha.jpg")
+        im.show()
+        im.close()
+    except:
+        pass
+    captcha = input("输入验证码\n>")
+    return captcha
 
 def zhihu_login(account, passwd):
     #知乎登录
@@ -53,7 +75,8 @@ def zhihu_login(account, passwd):
         post_data = {
             "_xsrf": get_xsrf(),
             "phone_num": account,
-            "password": passwd
+            "password": passwd,
+            "captcha": get_captcha()
         }
     else:
         if '@' in account:
@@ -62,11 +85,14 @@ def zhihu_login(account, passwd):
             post_data = {
                 "_xsrf": get_xsrf(),
                 "email": account,
-                "password": passwd
+                "password": passwd,
+                "captcha": get_captcha()
             }
     response_text = session.post(post_url, data=post_data, headers=header)
     session.cookies.save()
 
 
-# zhihu_login("18782902568", "admin123")
-get_index()
+zhihu_login("", "")
+# get_index()
+is_login()
+# get_captcha()

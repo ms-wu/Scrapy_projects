@@ -65,8 +65,9 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'ArticleSpider.pipelines.JsonExporterPipeline': 300,
-   # # 'scrapy.pipelines.images.ImagesPipeline': 1,
+    'ArticleSpider.pipelines.MysqlTwistedPipeline' : 1,
+    # 'ArticleSpider.pipelines.JsonExporterPipeline': 300,
+   # 'scrapy.pipelines.images.ImagesPipeline': 1,
    # 'ArticleSpider.pipelines.AritcleImagePipeline':1,
    #'ArticleSpider.pipelines.MysqlTwistedPipeline':1
 }
@@ -102,3 +103,6 @@ MYSQL_HOST = 'localhost'
 MYSQL_DBNAME = 'article_spider'
 MYSQL_USER = 'root'
 MYSQL_PASSWORD = ''
+
+SQL_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+SQL_DATE_FORMAT = "%Y-%m-%d"
