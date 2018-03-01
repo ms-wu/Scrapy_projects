@@ -11,6 +11,7 @@ from scrapy.loader import ItemLoader
 from scrapy.loader.processors import MapCompose, TakeFirst, Join
 from ArticleSpider.utils.common import extract_num
 from ArticleSpider.settings import SQL_DATETIME_FORMAT, SQL_DATE_FORMAT
+from w3lib.html import remove_tags
 
 
 class ArticlespiderItem(scrapy.Item):
@@ -152,3 +153,62 @@ class ZhihuAnswerItem(scrapy.Item):
         )
 
         return insert_sql, params
+
+def remove_splash(value):
+    # 去掉工作城市中的斜线
+    return value.replace("/", "")
+
+def handle_workaddr(value):
+    addr_list = value.split("\n")
+    addr_list = [item.strip() for item in addr_list if item.strip()=="查看地图"]
+    return "".join(addr_list)
+
+
+class LagouJobItemLoader(ItemLoader):
+    #自定义Itemloader
+    default_output_processor = TakeFirst()
+
+class LagouJobItem(scrapy.Item):
+    # 拉勾网信息
+    url = scrapy.Field()
+    url_id = scrapy.Field()
+    title = scrapy.Field()
+    salary = scrapy.Field()
+    work_place = scrapy.Field(
+        input_processor = MapCompose(remove_splash),
+    )
+    work_years = scrapy.Field(
+        input_processor = MapCompose(remove_splash),
+    )
+    degree_need = scrapy.Field(
+        input_processor = MapCompose(remove_splash),
+    )
+    job_type = scrapy.Field()
+    publish_time = scrapy.Field()
+    tags = scrapy.Field(
+        input_processor = Join(",")
+    )
+    job_advantage = scrapy.Field()
+    job_desc = scrapy.Field()
+    work_addr = scrapy.Field(
+        input_processor=MapCompose(remove_tags, handle_workaddr),
+    )
+    crawl_time = scrapy.Field()
+
+    def get_insert_sql(self):
+        insert_sql = """
+              insert into lagou(url, url_id, title, salary, work_place, work_years, degree_need,
+               job_type, publish_time, tags, job_advantage, job_desc, job_addr, crawl_time)
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+               ON DUPLICATE KEY UPDATE salary=VALUES(salary), job_desc=VALUES(job_desc), crawl_time=VALUES(crawl_time),  
+                   job_advantage=VALUES(job_advantage)
+        """
+        params = (
+            self["url"], self["url_id"], self["title"], self["salary"], self["work_place"],
+            self["work_years"], self["degree_need"], self["job_type"], self["publish_time"],
+            self["tags"], self["job_advantage"], self["job_desc"], self["crawl_time"].strftime(SQL_DATETIME_FORMAT)
+        )
+
+        return insert_sql, params
+
+
