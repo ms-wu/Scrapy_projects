@@ -27,6 +27,10 @@ class ZhihuSpider(scrapy.Spider):
         "User-agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.104 Safari/537.36"
     }
 
+    custom_settings = {
+        "COOKIES_ENABLED": True
+    }
+
     def parse(self, response):
         """
         提取出html界面的所有url，并跟踪这些url进一步爬取
