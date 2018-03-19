@@ -160,7 +160,7 @@ def remove_splash(value):
 
 def handle_workaddr(value):
     addr_list = value.split("\n")
-    addr_list = [item.strip() for item in addr_list if item.strip()=="查看地图"]
+    addr_list = [item.strip() for item in addr_list if item.strip()!="查看地图"]
     return "".join(addr_list)
 
 
@@ -206,7 +206,7 @@ class LagouJobItem(scrapy.Item):
         params = (
             self["url"], self["url_id"], self["title"], self["salary"], self["work_place"],
             self["work_years"], self["degree_need"], self["job_type"], self["publish_time"],
-            self["tags"], self["job_advantage"], self["job_desc"], self["crawl_time"].strftime(SQL_DATETIME_FORMAT)
+            self["tags"], self["job_advantage"], self["job_desc"],self["work_addr"], self["crawl_time"].strftime(SQL_DATETIME_FORMAT)
         )
 
         return insert_sql, params

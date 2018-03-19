@@ -76,7 +76,7 @@ class RandomUserAgentMiddleware(object):
             return getattr(self.ua, self.ua_type)
 
         random_agent = get_ua()
-        request.headers.setdefault("User-agent", get_ua())
+        request.headers.setdefault("User-Agent", get_ua())
         # request.meta["proxy"] = "http://61.135.217.7:80"
 
     # def ranom_agent(self):
