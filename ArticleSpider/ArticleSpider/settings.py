@@ -54,6 +54,7 @@ COOKIES_ENABLED = True
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
    'ArticleSpider.middlewares.RandomUserAgentMiddleware': 543,
+'ArticleSpider.middlewares.JSPageMiddleware': 1,
    #  'ArticleSpider.middlewares.RandomProxyMiddleware': 1,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
 }

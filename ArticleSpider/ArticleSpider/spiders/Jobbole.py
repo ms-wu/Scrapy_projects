@@ -8,11 +8,26 @@ from scrapy.http import Request
 from ArticleSpider.items import JobBoleAritcleItem, ArticleItemLoader
 from ArticleSpider.utils.common import get_md5
 from scrapy.loader import ItemLoader
+from selenium import webdriver
+from scrapy.xlib.pydispatch import dispatcher
+from scrapy import signals
+
 
 class JobboleSpider(scrapy.Spider):
     name = 'Jobbole'
     allowed_domains = ['blog.jobbole.com']
     start_urls = ['http://blog.jobbole.com/all-posts/']
+
+
+    def __init__(self):
+        self.browser = webdriver.Chrome(executable_path="H:\chromedriver.exe")
+        super(JobboleSpider, self).__init__()
+        dispatcher.connect(self.spider_closed, signals.spider_closed)
+
+    def spider_closed(self, spider):
+        # 当爬虫关闭时关闭浏览器
+        print("spider closed")
+        self.browser.quit()
 
     def parse(self, response):
         """
