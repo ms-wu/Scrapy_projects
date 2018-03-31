@@ -19,22 +19,36 @@ class JobboleSpider(scrapy.Spider):
     start_urls = ['http://blog.jobbole.com/all-posts/']
 
 
-    def __init__(self):
-        self.browser = webdriver.Chrome(executable_path="H:\chromedriver.exe")
-        super(JobboleSpider, self).__init__()
-        dispatcher.connect(self.spider_closed, signals.spider_closed)
+    # def __init__(self):
+    #     self.browser = webdriver.Chrome(executable_path="H:\chromedriver.exe")
+    #     super(JobboleSpider, self).__init__()
+    #     dispatcher.connect(self.spider_closed, signals.spider_closed)
+    #
+    # def spider_closed(self, spider):
+    #     # 当爬虫关闭时关闭浏览器
+    #     print("spider closed")
+    #     self.browser.quit()
 
-    def spider_closed(self, spider):
-        # 当爬虫关闭时关闭浏览器
-        print("spider closed")
-        self.browser.quit()
+    # 收集伯乐在线所有404错误url和页面数
+    handle_httpstatus_list = [404]
+
+    def __init__(self):
+        self.fail_urls = []
+        # dispatcher.connect(self.handle_spider_close, signals.spider_closed)
+
+    # 数据收集器使用
+    # def handle_spider_close(self):
+    #     self.crawler.stats.set_value("failed_urls", ",".join(self.fail_urls))
 
     def parse(self, response):
         """
         1:获取文章列表的url并交给scrapy进行下载
         2：获取下一页的url并进行下载，下载完成后交给parse
-
         """
+        if response.status == 404:
+            self.fail_urls.append(response.url)
+            self.crawler.stats.inc_value("failed_url")
+
         post_nodes = response.css("#archive .floated-thumb .post-thumb a")
         for post_node in post_nodes:
             image_url = post_node.css("img::attr(src)").extract_first("")

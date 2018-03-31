@@ -52,12 +52,12 @@ COOKIES_ENABLED = True
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-DOWNLOADER_MIDDLEWARES = {
-   'ArticleSpider.middlewares.RandomUserAgentMiddleware': 543,
-'ArticleSpider.middlewares.JSPageMiddleware': 1,
-   #  'ArticleSpider.middlewares.RandomProxyMiddleware': 1,
-    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-}
+# DOWNLOADER_MIDDLEWARES = {
+#    'ArticleSpider.middlewares.RandomUserAgentMiddleware': 543,
+# 'ArticleSpider.middlewares.JSPageMiddleware': 1,
+#    #  'ArticleSpider.middlewares.RandomProxyMiddleware': 1,
+#     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+# }
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
@@ -116,5 +116,5 @@ MYSQL_PASSWORD = ''
 SQL_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 SQL_DATE_FORMAT = "%Y-%m-%d"
 
-REDIRECT_ENABLED = False
-HTTPERROR_ALLOWED_CODES = [302,]
+# REDIRECT_ENABLED = False
+# HTTPERROR_ALLOWED_CODES = [302,]
